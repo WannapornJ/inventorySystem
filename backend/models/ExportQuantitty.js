@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataType) => {
     const model = sequelize.define('Export', {
         quantity: {
-            type: DataType.INTEGER,
+            type: DataType.STRING,
             defaultValue: 0
         }
     });

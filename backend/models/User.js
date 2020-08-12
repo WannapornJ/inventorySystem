@@ -10,7 +10,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         username: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
         password: {
             type: DataTypes.STRING,
@@ -20,20 +21,25 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(800)
         },
         salary: {
-            type: DataTypes.INTEGER
+            type: DataTypes.STRING,
+            defaultValue: 0
         },
         status: {
-            type: DataTypes.ENUM('hiring', 'quit')
+            type: DataTypes.ENUM('hiring', 'quit'),
+            defaultValue: 'hiring'
         },
         isAdmin: {
             type: DataTypes.ENUM('0', '1'),
             defaultValue: '0'
+        },
+        assign_to_store_id: {
+            type: DataTypes.STRING
         }
     })
-    
+
     model.associate = models => {
         model.hasOne(models.Store, { foreignKey: 'user_id' });
     }
-    
+
     return model;
 }

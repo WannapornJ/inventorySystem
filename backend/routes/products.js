@@ -1,21 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const controllers = require('../controllers/products');
+const passport = require('passport');
 
-router.post('/new', controllers.newProduct);
-router.get('/', controllers.getAllProduct);
-router.get('/:id', controllers.getOneProduct);
-router.patch('/editDetail/:id', controllers.editProduct);
-router.delete('/delete/:id', controllers.deleteProduct);
+const auth = passport.authenticate('jwt', {session:false});
 
-router.post('/import/new/:product_id', controllers.newImportQuantity);
-router.get('/import/amount/:product_id', controllers.getAllImportQuantity);
-router.get('/import/amount/:product_id/:id', controllers.getOneImportQuantity);
-router.patch('/import/amount/:product_id/:id', controllers.updateImportQuantity);
+router.post('/new', auth, controllers.newProduct);
+router.get('/', auth, controllers.getAllProduct);
+router.get('/:id', auth, controllers.getOneProduct);
+router.patch('/editDetail/:id', auth, controllers.editProduct);
+router.delete('/delete/:id', auth, controllers.deleteProduct);
 
-router.get('/export/amount/:product_id', controllers.newExportQuantity);
-router.get('/export/amount/:product_id', controllers.getAllExportQuantity);
-router.get('/export/amount/:product_id/:id', controllers.getOneExportQuantity);
-router.patch('/export/amount/:product_id/:id', controllers.updateExportQuantity);
+router.post('/import/new/:product_id', auth, controllers.newImportQuantity);
+router.get('/import/amount/:product_id', auth, controllers.getAllImportQuantity);
+router.get('/import/amount/:product_id/:id', auth, controllers.getOneImportQuantity);
+router.patch('/import/amount/:product_id/:id', auth, controllers.updateImportQuantity);
+
+router.get('/export/amount/:product_id', auth, controllers.newExportQuantity);
+router.get('/export/amount/:product_id', auth, controllers.getAllExportQuantity);
+router.get('/export/amount/:product_id/:id', auth, controllers.getOneExportQuantity);
+router.patch('/export/amount/:product_id/:id', auth, controllers.updateExportQuantity);
 
 module.exports = router;
