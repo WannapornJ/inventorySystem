@@ -99,19 +99,24 @@ const editProfile = async (req, res) => {
     if (id !== targetId && isAdmin === '0') {
         res.status(401).send({ message: 'You do not have a permission' })
     } else if (id === targetId && isAdmin === '0') {
-        const {username} = req.body
-        let image = req.files.image_url;
-        let fileExtension = image.name.split(".").slice(-1)[0];
-        let filePath = `/${(new Date()).getTime()}.${fileExtension}`;
-
-        image.mv(`images/${filePath}`);
-
-        const newPost = await db.Post.create({
-            image_url: filePath,
-            username
-        });
-
-        res.status(201).send(newPost);
+        const { username } = req.body;
+        
+        if (targetUpdate.dataValues.username !== username && username.length !== 0) {
+            let image = req.files.image_url;
+            let fileExtension = image.name.split(".").slice(-1)[0];
+            let filePath = `/${(new Date()).getTime()}.${fileExtension}`;
+    
+            image.mv(`images/users/${filePath}`);
+    
+            const newPost = await db.Post.create({
+                image_url: filePath,
+                username
+            });
+    
+            res.status(201).send(newPost);    
+        } else {
+            res.status(400).send({message: `please enter username`})
+        }
     } else if (isAdmin === '1' && Number(assignStoreId) === storeId) {
         try {
             const {name, surname, salary, isAdmin, assign_to_store_id } = req.body
