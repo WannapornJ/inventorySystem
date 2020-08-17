@@ -31,7 +31,10 @@ app.use(express.static('./images'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/products', productRoutes);
+app.use('/products', (req, res, next) => {
+    console.log('pass route')
+    next()
+}, productRoutes);
 app.use('/store', storeRoutes);
 app.use('/users', userRoutes);
 
