@@ -1,6 +1,28 @@
 const db = require("../models")
 const { Op } = require('sequelize')
 
+
+const exist = async (req, res) => {
+    const userId = req.user.id
+    console.log(userId)
+    const user = await db.User.findOne({
+        where: { id: userId }
+    })
+    const storeAssignId = user.dataValues.assign_to_store_id
+    const store = await db.Store.findOne({
+        where: { id: storeAssignId },
+    })
+    const product = await db.Product.findAll({
+        where: { store_id: store.dataValues.id },
+        include: [
+            { model: db.Import, attributes: [['quantity', 'importQuantity'], 'updatedAt'] },
+            { model: db.Export, attributes: [['quantity', 'exportQuantity'], 'updatedAt'] },
+        ]
+    })
+    let sendItem = product.map(prod => prod.dataValues)
+    res.status(200).send(sendItem)
+}
+
 const newProduct = async (req, res) => {
     const { id } = req.user;
     const targetStore = await db.Store.findOne({
@@ -113,7 +135,7 @@ const newImportQuantity = async (req, res) => {
     }
 }
 
-const getAllImportQuantity = async (req, res) => {
+const getOneImportQuantity = async (req, res) => {
     const productId = req.params.product_id;
     const product = await db.Product.findOne({
         where: {
@@ -176,7 +198,7 @@ const newExportQuantity = async (req, res) => {
         res.status(404).send({ message: 'product not found' })
     }
 }
-const getAllExportQuantity = async (req, res) => {
+const getOneExportQuantity = async (req, res) => {
     const productId = req.params.product_id;
     const product = await db.Product.findOne({
         where: {
@@ -241,9 +263,8 @@ const getExistQuantity = async (req, res) => {
             return obj.dataValues
         })
     })
-    console.log(importExist)
-    console.log(exportExist)
 }
+
 
 module.exports = {
     newProduct,
@@ -251,11 +272,11 @@ module.exports = {
     getOneProduct,
     editProduct,
     newImportQuantity,
-    getAllImportQuantity,
+    getOneImportQuantity,
     updateImportQuantity,
     newExportQuantity,
-    getAllExportQuantity,
+    getOneExportQuantity,
     updateExportQuantity,
     getExistQuantity,
-    getExistQuantity
+    exist
 }
